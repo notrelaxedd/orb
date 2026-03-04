@@ -21,7 +21,9 @@ export async function POST(req: Request) {
     const userId = session.client_reference_id;
     
     await supabase.from('users').update({ stripe_customer_id: session.customer, plan: 'pro' }).eq('id', userId);
-    await clerkClient.users.updateUserMetadata(userId, { publicMetadata: { stripe_customer_id: session.customer, plan: 'pro' } });
+    
+    const client = await clerkClient(); // FIX: Await the client
+    await client.users.updateUserMetadata(userId, { publicMetadata: { stripe_customer_id: session.customer, plan: 'pro' } });
   } else if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object as any;
     await supabase.from('users').update({ plan: 'free' }).eq('stripe_customer_id', subscription.customer);
