@@ -24,11 +24,11 @@ export default function BubbleMap({ groups, onSelectGroup }: { groups: any[], on
       .data(groups)
       .join('g')
       .style('cursor', 'pointer')
-      .on('click', (e, d) => onSelectGroup(d))
+      .on('click', (e: any, d: any) => onSelectGroup(d)) // FIX: Added explicit types
       .call(d3.drag()
-        .on('start', (e, d: any) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
-        .on('drag', (e, d: any) => { d.fx = e.x; d.fy = e.y; })
-        .on('end', (e, d: any) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }) as any);
+        .on('start', (e: any, d: any) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }) // FIX: Added explicit types
+        .on('drag', (e: any, d: any) => { d.fx = e.x; d.fy = e.y; }) // FIX: Added explicit types
+        .on('end', (e: any, d: any) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }) as any); // FIX: Added explicit types
 
     nodes.append('circle')
       .attr('r', (d: any) => d.r)
