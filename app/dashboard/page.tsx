@@ -10,7 +10,7 @@ export default function Dashboard() {
   const { getToken } = useAuth();
   const [groups, setGroups] = useState<any[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
-  const[loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -25,7 +25,8 @@ export default function Dashboard() {
 
       const fetchGroups = async () => {
         const { data } = await supabase.from('groups').select('*, email_group_assignments(count)');
-        const formatted = data?.map(g => ({
+        // FIX: Explicitly typed 'g' as 'any'
+        const formatted = data?.map((g: any) => ({
           ...g,
           r: Math.max(30, Math.min(150, (g.email_group_assignments[0]?.count || 0) * 8))
         })) ||[];
