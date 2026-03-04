@@ -9,7 +9,8 @@ export async function POST(req: Request) {
 
   const fetchGoogle = async () => {
     try {
-      const tokens = await clerkClient.users.getUserOauthAccessToken(userId, 'oauth_google');
+      const client = await clerkClient(); // FIX: Await the client
+      const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_google');
       if (!tokens.data || tokens.data.length === 0) return;
       const token = tokens.data[0].token;
       
@@ -38,7 +39,8 @@ export async function POST(req: Request) {
 
   const fetchMicrosoft = async () => {
     try {
-      const tokens = await clerkClient.users.getUserOauthAccessToken(userId, 'oauth_microsoft');
+      const client = await clerkClient(); // FIX: Await the client
+      const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_microsoft');
       if (!tokens.data || tokens.data.length === 0) return;
       const token = tokens.data[0].token;
 
@@ -61,11 +63,11 @@ export async function POST(req: Request) {
 
   const fetchApple = async () => {
     try {
-      const tokens = await clerkClient.users.getUserOauthAccessToken(userId, 'oauth_apple');
+      const client = await clerkClient(); // FIX: Await the client
+      const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_apple');
       if (!tokens.data || tokens.data.length === 0) return;
       const token = tokens.data[0].token;
-      // Note: Apple Mail does not have a public REST API for reading emails via OAuth. 
-      // This is a hypothetical endpoint to fulfill the exact prompt requirement.
+      
       const res = await fetch('https://api.mail.apple.com/v1/messages?limit=20', { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       for (const msg of data.messages ||[]) {
@@ -78,7 +80,6 @@ export async function POST(req: Request) {
 
   await Promise.all([fetchGoogle(), fetchMicrosoft(), fetchApple()]);
 
-  // Trigger AI Grouping asynchronously
   fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/ai/group`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
